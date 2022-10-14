@@ -4,7 +4,7 @@ import json
 import logging
 
 
-def write_value_to_file(value: tuple) -> None:
+def write_value_to_file(value: str) -> None:
     """
     Функция записывает данные в таблицу
 
@@ -13,12 +13,13 @@ def write_value_to_file(value: tuple) -> None:
     try:
         with open("dataset.csv", 'a') as dataset:
             writer = csv.writer(dataset, dialect='unix')
-            writer.writerow(value)
+            writer.writerow({value})
     except OSError:
         logging.warning("Ошибка открытия файла")
 
 
-def parse_value(valute: str, min_date: str = '1992-07-01', source: str = 'https://www.cbr-xml-daily.ru/daily_json.js'):
+def parse_value(valute: str, min_date: str = '1992-07-01', source: str = 'https://www.cbr-xml-daily.ru/daily_json.js') \
+        -> None:
     """
     Функция получает данные с сайта до последней записи
 
@@ -31,10 +32,10 @@ def parse_value(valute: str, min_date: str = '1992-07-01', source: str = 'https:
 
     while True:
         page_code = requests.get("https:" + d_page_code['PreviousURL'])
-        write_value_to_file((d_page_code['Date'][:10], d_page_code["Valute"][valute]['Value']))
+        write_value_to_file(f"{d_page_code['Date'][:10]}, {d_page_code['Valute'][valute]['Value']}")
         d_page_code = json.loads(page_code.text)
         if d_page_code['Date'][:10] == min_date:
-            write_value_to_file((d_page_code['Date'][:10], d_page_code['Valute'][valute]['Value']))
+            write_value_to_file(f"{d_page_code['Date'][:10]}, {d_page_code['Valute'][valute]['Value']}")
             break
 
 
