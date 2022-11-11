@@ -14,9 +14,10 @@ def write_data_to_file(data: list, destination: str) -> None:
     :return: Функция не возвращает значение
     """
     try:
-        with open(destination, 'a') as f:
-            writer = csv.writer(f, dialect='unix')
-            writer.writerows(data)
+        with open(destination, 'w') as f:
+            for i in data:
+                writer = csv.writer(f, dialect='unix')
+                writer.writerow([i])
     except OSError:
         logging.warning('Ошибка открытия файла')
 
@@ -34,10 +35,12 @@ def create_list(source: str = "dataset.csv", last_row: str = "1992-07-01, 125.26
             rows = [next(reader)[0]]
             while rows[-1] != last_row:
                 row = next(reader)[0]
+                print(row)
                 while rows[-1][:4] == row[:4] and row != last_row:
                     rows.append(row)
                     row = next(reader)[0]
-                    logging.info(f'Программа сейчас на записи: {rows[-1]}, последняя запись: {last_row}')
+                    logging.info(f'Программа сейчас на дате: {rows[-1].split(sep=", ")[0]}, '
+                                 f'последняя дата: {last_row.split(sep=", ")[0]}')
                 if row == last_row:
                     rows.append(row)
                 path =\
