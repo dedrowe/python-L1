@@ -25,7 +25,7 @@ def write_data_to_file(source: str, value: str) -> None:
     :return: Функция не возвращает значение
     """
     try:
-        with open(source, 'a') as f:
+        with open(source, 'w') as f:
             writer = csv.writer(f, dialect='unix')
             writer.writerow({value})
     except OSError:
@@ -44,7 +44,8 @@ def read_data_from_file(source: str = "dataset.csv", last_row: str = "1992-07-01
             reader = csv.reader(dataset, dialect='unix')
             row = next(reader)[0]
             while row != last_row:
-                logging.info(f'Программа сейчас на строке: {row}, последняя строка: {last_row}')
+                logging.info(f'Программа сейчас на дате: {row.split(sep=", ")[0]}, '
+                             f'последняя дата: {last_row.split(sep=", ")[0]}')
                 parse_data(row)
                 row = next(reader)[0]
             parse_data(row)
