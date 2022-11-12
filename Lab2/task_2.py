@@ -17,7 +17,7 @@ def write_data_to_file(data: list, destination: str) -> None:
         with open(destination, 'w') as f:
             for i in data:
                 writer = csv.writer(f, dialect='unix')
-                writer.writerow([i])
+                writer.writerow(i)
     except OSError:
         logging.warning('Ошибка открытия файла')
 
@@ -32,21 +32,22 @@ def create_list(source: str = "dataset.csv", last_row: str = "1992-07-01, 125.26
     try:
         with open(source, 'r') as dataset:
             reader = csv.reader(dataset, dialect='unix')
-            rows = [next(reader)[0]]
-            while rows[-1] != last_row:
-                row = next(reader)[0]
-                print(row)
-                while rows[-1][:4] == row[:4] and row != last_row:
+            rows = [next(reader)]
+            for row in reader:
+                if rows[-1][0][:4] != row[0][:4]:
+                    path =\
+                        f'task_2/{rows[-1][0][:4]}{rows[-1][0][5:7]}{rows[-1][0][8:10]}_' \
+                        f'{rows[0][0][:4]}{rows[0][0][5:7]}{rows[0][0][8:10]}'
+                    write_data_to_file(rows, path)
+                    rows = [row]
+                else:
                     rows.append(row)
-                    row = next(reader)[0]
-                    logging.info(f'Программа сейчас на дате: {rows[-1].split(sep=", ")[0]}, '
-                                 f'последняя дата: {last_row.split(sep=", ")[0]}')
-                if row == last_row:
-                    rows.append(row)
-                path =\
-                    f'task_2/{rows[-1][:4]}{rows[-1][5:7]}{rows[-1][8:10]}_{rows[0][:4]}{rows[0][5:7]}{rows[0][8:10]}'
-                write_data_to_file(rows, path)
-                rows = [row]
+                logging.info(f'Программа сейчас на дате: {rows[-1][0]}, '
+                             f'последняя дата: {last_row.split(sep=", ")[0]}')
+            path = \
+                f'task_2/{rows[-1][0][:4]}{rows[-1][0][5:7]}{rows[-1][0][8:10]}_' \
+                f'{rows[0][0][:4]}{rows[0][0][5:7]}{rows[0][0][8:10]}'
+            write_data_to_file(rows, path)
     except OSError:
         logging.warning('Ошибка открытия файла')
 
