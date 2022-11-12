@@ -7,7 +7,7 @@ logger = logging.getLogger()
 logger.setLevel('INFO')
 
 
-def write_value_to_file(value: str, source="dataset.csv") -> None:
+def write_value_to_file(value: list, source="dataset.csv") -> None:
     """
     Функция записывает данные в таблицу
 
@@ -17,7 +17,7 @@ def write_value_to_file(value: str, source="dataset.csv") -> None:
     try:
         with open(source, 'a') as dataset:
             writer = csv.writer(dataset, dialect='unix')
-            writer.writerow({value})
+            writer.writerow(value)
     except OSError as er:
         logging.warning(f'Ошибка открытия файла: {er}')
 
@@ -38,10 +38,10 @@ def parse_value(currency: str, min_date: str = '1992-07-01', source: str = 'http
 
     while d_page_code['Date'][:10] != min_date:
         page_code = requests.get("https:" + d_page_code['PreviousURL'])
-        write_value_to_file(f"{d_page_code['Date'][:10]}, {d_page_code['Valute'][currency]['Value']}")
+        write_value_to_file([d_page_code['Date'][:10], d_page_code['Valute'][currency]['Value']])
         d_page_code = json.loads(page_code.text)
         logging.info(f'Программа сейчас на дате {d_page_code["Date"][:10]}, последняя дата: {min_date}')
-    write_value_to_file(f"{d_page_code['Date'][:10]}, {d_page_code['Valute'][currency]['Value']}")
+    write_value_to_file([d_page_code['Date'][:10], d_page_code['Valute'][currency]['Value']])
 
 
 if __name__ == "__main__":
