@@ -22,11 +22,11 @@ def write_data_to_file(data: list, destination: str) -> None:
         logging.warning('Ошибка открытия файла')
 
 
-def create_list(source: str = "dataset.csv", last_row: str = "1992-07-01, 125.26") -> None:
+def create_list(source: str = "dataset.csv", last_date: str = "1992-07-01") -> None:
     """
     Функция создает список данных из файла
     :param source: Файл, из которого программа считывает данные
-    :param last_row: Последняя запись в файле
+    :param last_date: Последняя дата в файле
     :return: Фукнция не возвращает значение
     """
     try:
@@ -43,7 +43,7 @@ def create_list(source: str = "dataset.csv", last_row: str = "1992-07-01, 125.26
                 else:
                     rows.append(row)
                 logging.info(f'Программа сейчас на дате: {rows[-1][0]}, '
-                             f'последняя дата: {last_row.split(sep=", ")[0]}')
+                             f'последняя дата: {last_date}')
             path = \
                 f'task_2/{rows[-1][0][:4]}{rows[-1][0][5:7]}{rows[-1][0][8:10]}_' \
                 f'{rows[0][0][:4]}{rows[0][0][5:7]}{rows[0][0][8:10]}'

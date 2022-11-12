@@ -9,6 +9,12 @@ logger.setLevel('INFO')
 
 
 def write_data_to_file(data: list, destination: str) -> None:
+    """
+    Функция принимает список и путь к файлу, записывает в этот файл полученный список
+    :param data: Список для записи в файл
+    :param destination: Путь к файлу в который производится запись
+    :return: Функция не возвращает значение
+    """
     try:
         with open(destination, 'w') as f:
             for i in data:
@@ -18,7 +24,13 @@ def write_data_to_file(data: list, destination: str) -> None:
         logging.warning('Ошибка открытия файла')
 
 
-def create_list(source: str = 'dataset.csv', last_date: str = "1992-07-01"):
+def create_list(source: str = 'dataset.csv', last_date: str = "1992-07-01") -> None:
+    """
+    Функция считывает данные за неделю и превращает их в список
+    :param source: Файл из которого считываются данные
+    :param last_date: Последняя дата в файле
+    :return: Функция не возвращает значение
+    """
     with open(source, 'r') as dataset:
         reader = csv.reader(dataset, dialect='unix')
         rows = [next(reader)]
@@ -44,6 +56,6 @@ if __name__ == "__main__":
     try:
         os.makedirs('task_3')
         logging.info('Папка успешно создана')
+        create_list()
     except OSError:
         logging.info('Ошибка при создании папки')
-    create_list()

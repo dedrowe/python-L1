@@ -31,11 +31,11 @@ def write_data_to_file(source: str, value: str) -> None:
         logging.warning('Ошибка открытия файла')
 
 
-def read_data_from_file(source: str = "dataset.csv", last_row: str = "1992-07-01") -> None:
+def read_data_from_file(source: str = "dataset.csv", last_date: str = "1992-07-01") -> None:
     """
     Фукнция считывает данные из файла
     :param source: Файл из которого происходит считывание данных
-    :param last_row: Строка, до которой функция будет считывать данные
+    :param last_date: Последняя дата в файле
     :return: Фукнция не возвращает никакое значения
     """
     try:
@@ -44,7 +44,7 @@ def read_data_from_file(source: str = "dataset.csv", last_row: str = "1992-07-01
             for row in reader:
                 parse_data(row)
                 logging.info(f'Программа сейчас на дате: {row[0]}, '
-                             f'последняя дата: {last_row}')
+                             f'последняя дата: {last_date}')
     except OSError:
         logging.warning('Ошибка открытия файла')
 
