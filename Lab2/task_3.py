@@ -19,7 +19,7 @@ def write_data_to_file(data: list, destination: str) -> None:
         with open(destination, 'w') as f:
             for i in data:
                 writer = csv.writer(f, dialect='unix')
-                writer.writerow([i])
+                writer.writerow(i)
     except OSError:
         logging.warning('Ошибка открытия файла')
 
