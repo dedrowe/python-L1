@@ -30,11 +30,11 @@ def func_next() -> tuple:
     :return: Функция возвращает кортеж (дата, данные)
     """
     data_list = read_dataset()
-    next.count -= 1
-    return data_list[next.count][0], data_list[next.count][1]
+    func_next.count -= 1
+    return data_list[func_next.count][0], data_list[func_next.count][1]
 
 
-next.count = 0
+func_next.count = 0
 
 
 def search_in_dataset(date: datetime.date, source: str = "dataset.csv", last_date: str = "1992-07-01") -> list:
