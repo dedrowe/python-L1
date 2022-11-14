@@ -8,6 +8,35 @@ logger = logging.getLogger()
 logger.setLevel('INFO')
 
 
+def read_dataset(source: str = 'dataset.csv') -> list:
+    """
+    Функция считывает файл и возвращает его как список
+    :param source: Файл из которого происходит считывание
+    :return: Функция возвращает список
+    """
+    with open(source, 'r') as dataset:
+        reader = csv.reader(dataset, dialect='unix')
+        rows = []
+        for row in reader:
+            rows.append(row)
+        return rows
+
+
+def func_next() -> tuple:
+    """
+    Функция, которая при первом вызове возвращает данные для самой ранней возможной даты
+    (возвращается кортеж (дата, данные)), а при каждом следующем вызове данные для следующей по порядку даты  в файле
+    Название изменено из-за конфликта с next(reader)
+    :return: Функция возвращает кортеж (дата, данные)
+    """
+    data_list = read_dataset()
+    next.count -= 1
+    return data_list[next.count][0], data_list[next.count][1]
+
+
+next.count = 0
+
+
 def search_in_dataset(date: datetime.date, source: str = "dataset.csv", last_date: str = "1992-07-01") -> list:
     """
     Функция прнимает дату и ищет данные для нее а изначальном файле
@@ -87,6 +116,8 @@ if __name__ == "__main__":
     print("3 - файлы по годам")
     print("4 - файлы по неделям")
     a = datetime.date(int(user_input[0]), int(user_input[1]), int(user_input[2]))
+    print(func_next())
+    print(func_next())
     flag = int(input())
     match flag:
         case 1:
