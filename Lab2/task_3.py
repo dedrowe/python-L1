@@ -1,7 +1,8 @@
 import csv
 import logging
 import os
-import datetime
+from datetime import datetime
+import re
 
 
 logger = logging.getLogger()
@@ -20,35 +21,38 @@ def write_data_to_file(data: list, destination: str) -> None:
             for i in data:
                 writer = csv.writer(f, dialect='unix')
                 writer.writerow(i)
-    except OSError:
-        logging.warning('Ошибка открытия файла')
+    except OSError as er:
+        logging.warning(f'Ошибка открытия файла {er}')
 
 
-def create_list(source: str = 'dataset.csv', last_date: str = "1992-07-01") -> None:
+def create_list(source: str = 'dataset.csv', last_date: str = "1992-07-01", dest: str = 'task_3') -> None:
     """
     Функция считывает данные за неделю и превращает их в список
     :param source: Файл из которого считываются данные
     :param last_date: Последняя дата в файле
+    :param dest: Путь к файлу
     :return: Функция не возвращает значение
     """
     with open(source, 'r') as dataset:
         reader = csv.reader(dataset, dialect='unix')
         rows = [next(reader)]
         for row in reader:
-            temp1 = rows[-1][0].split(sep='-')
             logging.info(f'Программа сейчас на дате: {row[0]}, '
                          f'последняя дата: {last_date}')
-            temp2 = row[0].split(sep='-')
-            if datetime.date(int(temp1[0]), int(temp1[1]), int(temp1[2])).isocalendar()[1] == \
-                    datetime.date(int(temp2[0]), int(temp2[1]), int(temp2[2])).isocalendar()[1]:
+            if datetime.date(datetime.strptime(rows[-1][0], "%Y-%m-%d")).isocalendar()[1] == \
+                    datetime.date(datetime.strptime(row[0], "%Y-%m-%d")).isocalendar()[1]:
                 rows.append(row)
             else:
-                path = f'task_3/{rows[-1][0][:4]}{rows[-1][0][5:7]}{rows[-1][0][8:10]}' \
-                       f'_{rows[0][0][:4]}{rows[0][0][5:7]}{rows[0][0][8:10]}'
+                temp_date = re.sub(r'-', '', rows[-1][0])
+                temp_last_date = re.sub(r'-', '', rows[0][0])
+                path = f'{dest}/{temp_date}_' \
+                       f'{temp_last_date}'
                 write_data_to_file(rows, path)
                 rows = [row]
-        path = f'task_3/{rows[-1][0][:4]}{rows[-1][0][5:7]}{rows[-1][0][8:10]}' \
-               f'_{rows[0][0][:4]}{rows[0][0][5:7]}{rows[0][0][8:10]}'
+        temp_date = re.sub(r'-', '', rows[-1][0])
+        temp_last_date = re.sub(r'-', '', rows[0][0])
+        path = f'{dest}/{temp_date}_' \
+               f'{temp_last_date}'
         write_data_to_file(rows, path)
 
 
@@ -57,5 +61,5 @@ if __name__ == "__main__":
         os.makedirs('task_3')
         logging.info('Папка успешно создана')
         create_list()
-    except OSError:
-        logging.info('Ошибка при создании папки')
+    except OSError as er:
+        logging.info(f'Ошибка при создании папки {er}')

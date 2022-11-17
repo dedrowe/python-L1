@@ -1,5 +1,5 @@
 import csv
-import datetime
+from datetime import datetime
 import logging
 import os
 
@@ -51,16 +51,15 @@ def search_in_dataset(date: datetime.date, source: str = "dataset.csv", last_dat
             for row in reader:
                 logging.info(f'Программа сейчас на дате: {row[0]}, '
                              f'последняя дата: {last_date}')
-                temp = row[0].split(sep='-')
-                temp_date = datetime.date(int(temp[0]), int(temp[1]), int(temp[2]))
+                temp_date = datetime.date(datetime.strptime(row[0], "%Y-%m-%d"))
                 if temp_date >= date:
                     if row[0] == str(date):
                         return row
                 if row[0] == str(date):
                     return row
-            return [None]
-    except OSError:
-        logging.error("Ошибка открытия файла")
+            return None
+    except OSError as er:
+        logging.error(f"Ошибка открытия файла {er}")
 
 
 def search_in_task_1(date: datetime.date, source_1: str = "task_1/X.csv", source_2: str = "task_1/Y.csv",
@@ -82,14 +81,13 @@ def search_in_task_1(date: datetime.date, source_1: str = "task_1/X.csv", source
                     logging.info(f'Программа сейчас на дате: {row_1[0]}, '
                                  f'последняя дата: {last_date}')
                     row_2 = next(reader_2)
-                    temp = row_1[0].split(sep='-')
-                    temp_date = datetime.date(int(temp[0]), int(temp[1]), int(temp[2]))
+                    temp_date = datetime.date(datetime.strptime(row_1[0], "%Y-%m-%d"))
                     if temp_date >= date:
                         if row_1[0] == str(date):
                             return [row_1[0], row_2[0]]
-            return [None]
-    except OSError:
-        logging.error("Ошибка открытия файла")
+            return None
+    except OSError as er:
+        logging.error(f"Ошибка открытия файла {er}")
 
 
 def search_in_task_2_and_3(date: datetime.date, source: str) -> list:
@@ -105,17 +103,17 @@ def search_in_task_2_and_3(date: datetime.date, source: str) -> list:
             for row in reader:
                 if row[0] == str(date):
                     return row
-    return [None]
+    return None
 
 
 if __name__ == "__main__":
-    user_input = str(input()).split(sep='-')
+    user_input = str(input())
     print("Выберите тип входных файлов:")
     print("1 - один файл со всеми данными")
     print("2 - два файла (в одном даты, в другом значения для них")
     print("3 - файлы по годам")
     print("4 - файлы по неделям")
-    a = datetime.date(int(user_input[0]), int(user_input[1]), int(user_input[2]))
+    a = datetime.date(datetime.strptime(user_input, "%Y-%m-%d"))
     print(func_next())
     print(func_next())
     flag = int(input())
