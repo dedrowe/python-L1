@@ -13,7 +13,8 @@ class Iterator:
     def __next__(self):
         if self.count < self.limit:
             self.count += 1
-            return func_next()
+            data = read_dataset()
+            return func_next(self.count, data)
         else:
             raise StopIteration
 

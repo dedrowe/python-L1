@@ -22,19 +22,14 @@ def read_dataset(source: str = 'dataset.csv') -> list:
         return rows
 
 
-def func_next() -> tuple:
+def func_next(counter: int, data_list: list) -> tuple:
     """
     Функция, которая при первом вызове возвращает данные для самой ранней возможной даты
     (возвращается кортеж (дата, данные)), а при каждом следующем вызове данные для следующей по порядку даты  в файле
     Название изменено из-за конфликта с next(reader)
     :return: Функция возвращает кортеж (дата, данные)
     """
-    data_list = read_dataset()
-    func_next.count -= 1
-    return data_list[func_next.count][0], data_list[func_next.count][1]
-
-
-func_next.count = 0
+    return data_list[-counter][0], data_list[-counter][1]
 
 
 def search_in_dataset(date: datetime.date, source: str = "dataset.csv", last_date: str = "1992-07-01") -> list:
@@ -114,8 +109,9 @@ if __name__ == "__main__":
     print("3 - файлы по годам")
     print("4 - файлы по неделям")
     a = datetime.date(datetime.strptime(user_input, "%Y-%m-%d"))
-    print(func_next())
-    print(func_next())
+    data = read_dataset()
+    for i in range(1, len(data) + 1):
+        print(func_next(i, data))
     flag = int(input())
     match flag:
         case 1:

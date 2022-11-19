@@ -42,16 +42,14 @@ def create_list(source: str = "dataset.csv", last_date: str = "1992-07-01", dest
                                  f'последняя дата: {last_date}')
                     temp_date = re.sub(r'-', '', rows[-1][0])
                     temp_last_date = re.sub(r'-', '', rows[0][0])
-                    path = f'{dest}/{temp_date}_' \
-                           f'{temp_last_date}'
+                    path = os.path.join(dest, f'{temp_date}_{temp_last_date}')
                     write_data_to_file(rows, path)
                     rows = [row]
                 else:
                     rows.append(row)
             temp_date = re.sub(r'-', '', rows[-1][0])
             temp_last_date = re.sub(r'-', '', rows[0][0])
-            path = f'{dest}/{temp_date}_' \
-                   f'{temp_last_date}'
+            path = os.path.join(dest, f'{temp_date}_{temp_last_date}')
             write_data_to_file(rows, path)
     except OSError as er:
         logging.warning(f'Ошибка открытия файла {er}')
