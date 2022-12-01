@@ -57,19 +57,20 @@ def search_in_dataset(date: datetime.date, source: str = "dataset.csv", last_dat
         logging.error(f"Ошибка открытия файла {er}")
 
 
-def search_in_task_1(date: datetime.date, source_1: str = "task_1/X.csv", source_2: str = "task_1/Y.csv",
-                     last_date: str = "1992-07-01") -> list:
+def search_in_task_1(date: datetime.date, path: str, source_1: str = "task_1/X.csv", source_2: str = "task_1/Y.csv",
+                     last_date: str = "1992-07-01") -> str:
     """
     Функция принимает дату и ищет данные для нее в файлах полученных в первом задании
     :param date: Дата по которой происходит поиск
+    :param path: Путь к папкам task_1 и task_2
     :param source_1: Путь к файлу с датами
     :param source_2: Путь к файлу со значениями
     :param last_date: Последняя дата в файле с датами
     :return: Функция возвращает список вида (дата, значение)
     """
     try:
-        with open(source_1, 'r') as date_list:
-            with open(source_2, 'r') as value_list:
+        with open(os.path.join(path, source_1), 'r') as date_list:
+            with open(os.path.join(path, source_2), 'r') as value_list:
                 reader_1 = csv.reader(date_list, dialect='unix')
                 reader_2 = csv.reader(value_list, dialect='unix')
                 for row_1 in reader_1:
@@ -79,7 +80,7 @@ def search_in_task_1(date: datetime.date, source_1: str = "task_1/X.csv", source
                     temp_date = datetime.date(datetime.strptime(row_1[0], "%Y-%m-%d"))
                     if temp_date >= date:
                         if row_1[0] == str(date):
-                            return [row_1[0], row_2[0]]
+                            return row_2[0]
             return None
     except OSError as er:
         logging.error(f"Ошибка открытия файла {er}")
@@ -117,7 +118,7 @@ if __name__ == "__main__":
         case 1:
             print(search_in_dataset(a))
         case 2:
-            print(search_in_task_1(a))
+            print(search_in_task_1(a, os.getcwd()))
         case 3:
             print(search_in_task_2_and_3(a, 'task_2'))
         case 4:
