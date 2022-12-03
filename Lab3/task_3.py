@@ -25,9 +25,10 @@ def write_data_to_file(data: list, destination: str) -> None:
         logging.warning(f'Ошибка открытия файла {er}')
 
 
-def create_list_3(dest: str = 'task_3', source: str = 'dataset.csv', last_date: str = "1992-07-01") -> None:
+def create_list_3(path: str = '', dest: str = 'task_3', source: str = 'dataset.csv', last_date: str = "1992-07-01") -> None:
     """
     Функция считывает данные за неделю и превращает их в список
+    :param path: Путь до папки с файлами
     :param source: Файл из которого считываются данные
     :param last_date: Последняя дата в файле
     :param dest: Путь к файлу
@@ -45,13 +46,13 @@ def create_list_3(dest: str = 'task_3', source: str = 'dataset.csv', last_date: 
             else:
                 temp_date = re.sub(r'-', '', rows[-1][0])
                 temp_last_date = re.sub(r'-', '', rows[0][0])
-                path = os.path.join(dest, f'{temp_date}_{temp_last_date}')
-                write_data_to_file(rows, path)
+                temp_path = os.path.join(path, dest, f'{temp_date}_{temp_last_date}')
+                write_data_to_file(rows, temp_path)
                 rows = [row]
         temp_date = re.sub(r'-', '', rows[-1][0])
         temp_last_date = re.sub(r'-', '', rows[0][0])
-        path = os.path.join(dest, f'{temp_date}_{temp_last_date}')
-        write_data_to_file(rows, path)
+        temp_path = os.path.join(path, dest, f'{temp_date}_{temp_last_date}')
+        write_data_to_file(rows, temp_path)
 
 
 if __name__ == "__main__":

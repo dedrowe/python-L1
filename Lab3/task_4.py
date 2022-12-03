@@ -32,16 +32,17 @@ def func_next(counter: int, data_list: list) -> tuple:
     return data_list[-counter][0], data_list[-counter][1]
 
 
-def search_in_dataset(date: datetime.date, source: str = "dataset.csv", last_date: str = "1992-07-01") -> list:
+def search_in_dataset(date: datetime.date, path: str = '', source: str = "dataset.csv", last_date: str = "1992-07-01") -> list:
     """
     Функция прнимает дату и ищет данные для нее а изначальном файле
     :param date: Дата по которой происходит поиск
+    :param path: Путь к датасету
     :param source: Изначальный файл
     :param last_date: Последняя запись в файле
     :return: Функция возвращает список вида (дата, значение)
     """
     try:
-        with open(source, 'r') as dataset:
+        with open(os.path.join(path, source), 'r') as dataset:
             reader = csv.reader(dataset, dialect='unix')
             for row in reader:
                 logging.info(f'Программа сейчас на дате: {row[0]}, '

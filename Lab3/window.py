@@ -24,7 +24,7 @@ class Window(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('Искатель курса валют по дате 3000')
-        self.resize(1280, 768)
+        self.setFixedSize(QSize(1000, 300))
         self.dataset_path = QFileDialog.getExistingDirectory(self, "Выберите путь к файлу с исходными данными")
         v = QVBoxLayout()
         h1 = QHBoxLayout()
@@ -51,10 +51,10 @@ class Window(QMainWindow):
         button_create_task_3_dataset = self.create_button(h4, 'Создать датасет из task_3', 200, 50)
         button_choose_task_3_path = self.create_button(h4, 'Выбрать путь', 200, 50)
         h4.addWidget(self.task_3_path_label)
-        button_search_in_dataset = self.create_button(h6, 'Искать в исходном файле', 250, 50)
-        button_search_in_task_1 = self.create_button(h6, 'Искать в разделенных по типу файлах', 250, 50)
-        button_search_in_task_2 = self.create_button(h6, "Искать в разделенных по годам файлах", 250, 50)
-        button_search_in_task_3 = self.create_button(h6, 'Искать в разделенных по неделям файлах', 250, 50)
+        button_search_in_dataset = self.create_button(h6, 'Искать в исходном файле', 240, 50)
+        button_search_in_task_1 = self.create_button(h6, 'Искать в разделенных по типу файлах', 240, 50)
+        button_search_in_task_2 = self.create_button(h6, "Искать в разделенных по годам файлах", 240, 50)
+        button_search_in_task_3 = self.create_button(h6, 'Искать в разделенных по неделям файлах', 240, 50)
         h6.addStretch(1)
         self.line = QLineEdit()
         h5.addWidget(date)
@@ -70,17 +70,17 @@ class Window(QMainWindow):
         v.addStretch(1)
 
         button_create_new_annotation.clicked.connect(self.copy_dataset)
-        button_choose_dataset_path.clicked.connect(self.choose_path_for_dataset)
-        button_create_task_1_dataset.clicked.connect(self.create_task_1_dataset)
-        button_choose_task_1_path.clicked.connect(self.choose_path_for_task_1)
-        button_create_task_2_dataset.clicked.connect(self.create_task_2_dataset)
-        button_choose_task_2_path.clicked.connect(self.choose_path_for_task_2)
-        button_create_task_3_dataset.clicked.connect(self.create_task_3_dataset)
-        button_choose_task_3_path.clicked.connect(self.choose_path_for_task_3)
-        button_search_in_dataset.clicked.connect(self.search_in_dataset)
-        button_search_in_task_1.clicked.connect(self.search_in_task_1)
-        button_search_in_task_2.clicked.connect(self.search_in_task_2)
-        button_search_in_task_3.clicked.connect(self.search_in_task_3)
+        button_choose_dataset_path.clicked.connect(lambda: self.choose_path(self.dataset_path_label))
+        button_create_task_1_dataset.clicked.connect(lambda: self.create_task_dataset(self.task_1_path, 1))
+        button_choose_task_1_path.clicked.connect(lambda: self.choose_path(self.task_1_path_label))
+        button_create_task_2_dataset.clicked.connect(lambda: self.create_task_dataset(self.task_2_path, 2))
+        button_choose_task_2_path.clicked.connect(lambda: self.choose_path(self.task_2_path_label))
+        button_create_task_3_dataset.clicked.connect(lambda: self.create_task_dataset(self.task_3_path, 3))
+        button_choose_task_3_path.clicked.connect(lambda: self.choose_path(self.task_3_path_label))
+        button_search_in_dataset.clicked.connect(lambda: self.search(1))
+        button_search_in_task_1.clicked.connect(lambda: self.search(2))
+        button_search_in_task_2.clicked.connect(lambda: self.search(3))
+        button_search_in_task_3.clicked.connect(lambda: self.search(4))
 
         container = QWidget()
         container.setLayout(v)
@@ -102,53 +102,20 @@ class Window(QMainWindow):
         box.addWidget(button)
         return button
 
-    def choose_path_for_dataset(self) -> None:
-        """
-        Функция позволяет пользователю ввести путь для изначального датасета
-        :return: Функция не возвращает значение
-        """
-        path = QFileDialog.getExistingDirectory(self, "Выберите путь к новому файлу")
-        if path:
-            self.dataset_path = path
-            self.dataset_path_label.setText(f'Путь к исходному файлу: {path}')
+    def choose_path(self, path_label: QLabel) -> None:
+        temp = QFileDialog.getExistingDirectory(self, "Выберите путь к новому файлу")
+        if temp:
+            if path_label == self.dataset_path_label:
+                self.dataset_path = temp
+            elif path_label == self.task_1_path_label:
+                self.task_1_path = temp
+            elif path_label == self.task_2_path_label:
+                self.task_2_path = temp
+            elif path_label == self.task_3_path_label:
+                self.task_3_path = temp
+            path_label.setText(f'Путь к исходному файлу: {temp}')
         else:
-            self.dataset_path_label.setText('Ошибка')
-
-    def choose_path_for_task_1(self) -> None:
-        """
-        Функция позволяет пользователю ввести путь для файлов для task_1
-        :return: Функция не возвращает значение
-        """
-        path = QFileDialog.getExistingDirectory(self, "Выберите путь к новому файлу")
-        if path:
-            self.task_1_path = path
-            self.task_1_path_label.setText(f'Путь к файлам разделенным по типам: {path}')
-        else:
-            self.task_1_path_label.setText('Ошибка')
-
-    def choose_path_for_task_2(self) -> None:
-        """
-        Функция позволяет пользователю ввести путь для файлов для task_2
-        :return: Функция не возвращает значение
-        """
-        path = QFileDialog.getExistingDirectory(self, "Выберите путь к новому файлу")
-        if path:
-            self.task_2_path = path
-            self.task_2_path_label.setText(f'Путь к файлам разделенным по годам:: {path}')
-        else:
-            self.task_2_path_label.setText('Ошибка')
-
-    def choose_path_for_task_3(self) -> None:
-        """
-        Функция позволяет пользователю ввести путь для файлов для task_3
-        :return: Функция не возвращает значение
-        """
-        path = QFileDialog.getExistingDirectory(self, "Выберите путь к новому файлу")
-        if path:
-            self.task_3_path = path
-            self.task_3_path_label.setText(f'Путь к файлам разделенным по неделям: {path}')
-        else:
-            self.task_3_path_label.setText('Ошибка')
+            path_label.setText('Ошибка')
 
     def copy_dataset(self) -> None:
         """
@@ -157,102 +124,49 @@ class Window(QMainWindow):
         """
         if self.dataset_path:
             shutil.copyfile(os.path.join(self.dataset_path, 'dataset.csv'),
-                            os.path.join(self.dataset_path, '../dataset.csv'))
+                            os.path.join(self.dataset_path, 'dataset_copy.csv'))
             self.value.setText('Копирование выполнено успешно')
 
-    def create_task_1_dataset(self) -> None:
-        """
-        Функция разбивает начальный файл на два: с датами и со значениями для этих дат
-        :return: Функция не возвращает значение
-        """
-        if self.task_1_path:
-            os.makedirs(os.path.join(self.task_1_path, 'task_1'))
-            read_data_from_file(self.task_1_path)
-            self.value.setText('Файлы созданы')
+    def create_task_dataset(self, path: str, flag: int):
+        if path:
+            if flag == 1:
+                os.makedirs(os.path.join(self.task_1_path, 'task_1'))
+                read_data_from_file(self.task_1_path)
+                self.value.setText('Файлы созданы')
+            elif flag == 2:
+                os.makedirs(os.path.join(self.task_2_path, 'task_2'))
+                create_list_2(self.task_2_path)
+                self.value.setText('Файлы созданы')
+            elif flag == 3:
+                os.makedirs(os.path.join(self.task_3_path, 'task_3'))
+                create_list_3(self.task_3_path)
+                self.value.setText('Файлы созданы')
         else:
             self.value.setText('Ошибка при создании файлов')
 
-    def create_task_2_dataset(self) -> None:
-        """
-        Функция разбивает изначальный файл по годам
-        :return: Функция не возвращает значение
-        """
-        if self.task_2_path:
-            path = os.path.join(self.task_2_path, 'task_2')
-            os.makedirs(path)
-            create_list_2(path)
-            self.value.setText('Файлы созданы')
-        else:
-            self.value.setText('Ошибка при создании файлов')
-
-    def create_task_3_dataset(self) -> None:
-        """
-        Функция разбивает изначальный файл по неделям
-        :return: Функция не возвращает значение
-        """
-        if self.task_3_path:
-            path = os.path.join(self.task_3_path, 'task_3')
-            os.makedirs(path)
-            create_list_3(path)
-            self.value.setText('Файлы созданы')
-        else:
-            self.value.setText('Ошибка при создании файлов')
-
-    def search_in_dataset(self) -> None:
+    def search(self, flag: int) -> None:
         """
         Функция ищет значение для выбранной даты в начальном датасете
         :return: Функция не возвращает значение
         """
+        tmp = None
         temp = self.line.text()
         if re.match('\d{4}-\d\d-\d\d', temp):
-            tmp = search_in_dataset(datetime.date(datetime.strptime(temp, "%Y-%m-%d")), self.dataset_path)
-            if tmp is None:
-                self.value.setText('Запись для такой даты не существует')
-            else:
-                self.value.setText(tmp[1])
-        else:
-            self.value.setText('Дата введена неверно')
-
-    def search_in_task_1(self) -> None:
-        """
-        Функция ищет значение для выбранной даты в файлах из task_1
-        :return: Функция не возвращает значение
-        """
-        temp = self.line.text()
-        if re.match('\d{4}-\d\d-\d\d', temp):
-            tmp = search_in_task_1(datetime.date(datetime.strptime(temp, "%Y-%m-%d")), self.task_1_path)
-            if tmp is None:
-                self.value.setText('Запись для такой даты не существует')
-            else:
-                self.value.setText(tmp)
-        else:
-            self.value.setText('Дата введена неверно')
-
-    def search_in_task_2(self) -> None:
-        """
-        Функция ищет значение для выбранной даты в файлах из task_2
-        :return: Функция не возвращает значение
-        """
-        temp = self.line.text()
-        if re.match('\d{4}-\d\d-\d\d', temp):
-            tmp = search_in_task_2_and_3(datetime.date(datetime.strptime(temp, "%Y-%m-%d")),
-                                         os.path.join(self.task_2_path, 'task_2'))
-            if tmp is None:
-                self.value.setText('Запись для такой даты не существует')
-            else:
-                self.value.setText(tmp[1])
-        else:
-            self.value.setText('Дата введена неверно')
-
-    def search_in_task_3(self) -> None:
-        """
-        Функция ищет значение для выбранной даты в файлах из task_3
-        :return: Функция не возвращает значение
-        """
-        temp = self.line.text()
-        if re.match('\d{4}-\d\d-\d\d', temp):
-            tmp = search_in_task_2_and_3(datetime.date(datetime.strptime(temp, "%Y-%m-%d")),
-                                         os.path.join(self.task_3_path, 'task_2'))
+            if flag == 1:
+                tmp = search_in_dataset(datetime.date(datetime.strptime(temp, "%Y-%m-%d")), self.dataset_path)
+            elif flag == 2:
+                tmp = search_in_task_1(datetime.date(datetime.strptime(temp, "%Y-%m-%d")), self.task_1_path)
+                if tmp is None:
+                    self.value.setText('Запись для такой даты не существует')
+                else:
+                    self.value.setText(tmp)
+                return None
+            elif flag == 3:
+                tmp = search_in_task_2_and_3(datetime.date(datetime.strptime(temp, "%Y-%m-%d")),
+                                             os.path.join(self.task_2_path, 'task_2'))
+            elif flag == 4:
+                tmp = search_in_task_2_and_3(datetime.date(datetime.strptime(temp, "%Y-%m-%d")),
+                                             os.path.join(self.task_3_path, 'task_2'))
             if tmp is None:
                 self.value.setText('Запись для такой даты не существует')
             else:
