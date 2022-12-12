@@ -1,7 +1,9 @@
 import pandas as pd
+from functools import partial
 import math
 import matplotlib.pyplot as plt
 import logging
+import numpy as np
 
 
 logger = logging.getLogger()
@@ -16,8 +18,8 @@ def create_dataframe(source: str = 'dataset.csv') -> pd.DataFrame:
     """
     frame = pd.read_csv(source, sep=",", names=['date', 'value'])
     frame.date = pd.to_datetime(frame.date, format='%Y-%m-%d')
-    delete_invalid_rows(a)
-    add_median_and_average_value_columns(a)
+    delete_invalid_rows(frame)
+    add_median_and_average_value_columns(frame)
     return frame
 
 
@@ -85,7 +87,9 @@ def draw_value_chart(frame: pd.DataFrame, x_value: str = "date", y_value: str = 
     :param name: Название графика
     :return: Функция не возвращает значение
     """
-    frame.plot(x=x_value, y=y_value, kind='line')
+    temp = plt.subplot()
+    temp.plot(frame[x_value], frame[y_value])
+    temp.set_yscale('log')
     plt.title(name)
     plt.show()
 
@@ -108,7 +112,6 @@ def draw_value_chart_for_one_month(frame: pd.DataFrame, date: pd.Timestamp) -> N
 
 if __name__ == "__main__":
     a = create_dataframe()
-    print(int(input()))
     while True:
         print("Чтобы заново считать датафрейм из файла нажмите 1")
         print("Чтобы отфильтровать датафрейм по отклонению от среднего значения нажмите 2")
